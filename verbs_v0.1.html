@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Verb conjugation rules</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="styles.css">
+
+<script>
+  // Tweakable defaults — host parses & rewrites this block.
+  window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "verb": "play",
+    "density": "comfortable",
+    "theme": "paper",
+    "showExamples": true
+  }/*EDITMODE-END*/;
+</script>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<div id="root"></div>
+
+<template id="__bundler_thumbnail">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" fill="#2563eb"/>
+  <g transform="translate(30 30)" fill="none" stroke="white" stroke-width="3">
+    <rect x="0" y="0" width="40" height="40" rx="3"/>
+    <line x1="0" y1="13" x2="40" y2="13"/>
+    <line x1="0" y1="26" x2="40" y2="26"/>
+    <line x1="13" y1="0" x2="13" y2="40"/>
+  </g>
+  <text x="50" y="82" text-anchor="middle" fill="white" font-family="Inter, sans-serif" font-weight="800" font-size="10">VERBS</text>
+</svg>
+</template>
+
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="conjugator.jsx"></script>
+<script type="text/babel" src="tenses.jsx"></script>
+<script type="text/babel" src="app.jsx"></script>
+<script type="text/babel">
+  const root = ReactDOM.createRoot(document.getElementById("root"));
+  root.render(<window.App />);
+</script>
+
+</body>
+</html>

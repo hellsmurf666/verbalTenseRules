@@ -1,0 +1,23 @@
+{
+  "name": "verbal-tense-rules",
+  "version": "1.1.0",
+  "private": true,
+  "scripts": {
+    "build": "esbuild main.jsx --bundle --format=iife --platform=browser --minify --outfile=dist/main.js",
+    "build:dev": "esbuild main.jsx --bundle --format=iife --platform=browser --sourcemap --outfile=dist/main.js",
+    "build:comparison": "esbuild comparison-main.jsx --bundle --format=iife --platform=browser --minify --outfile=dist/comparison.js",
+    "build:comparison:dev": "esbuild comparison-main.jsx --bundle --format=iife --platform=browser --sourcemap --outfile=dist/comparison.js",
+    "build:all": "npm run build && npm run build:comparison",
+    "build:all:dev": "npm run build:dev && npm run build:comparison:dev",
+    "package": "node scripts/package.mjs",
+    "site": "npm run build:all && npm run package",
+    "preview": "npx --yes serve site"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.4"
+  }
+}
