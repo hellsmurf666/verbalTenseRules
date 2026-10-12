@@ -23,6 +23,8 @@ function buildTense(c, tense, polarity) {
   const neg = (t) => ({ t: "neg", text: t });
   const pron = (t) => ({ t: "pron", text: t });
   const plain = (t) => ({ t: "plain", text: t });
+  // inverted subject: lowercase except "I"
+  const pronInt = (t) => pron(t === "I" ? t : t.toLowerCase());
 
   const pronounsCanon = ["I", "You", "He / She / It", "We", "You (pl.)", "They"];
 
@@ -42,7 +44,7 @@ function buildTense(c, tense, polarity) {
     } else {
       pronounsCanon.forEach((p, i) => {
         const a = (i === 2) ? "Does" : "Do";
-        push(p, [aux(a), pron(p.toLowerCase()), lex(c.base), plain("?")]);
+        push(p, [aux(a), pronInt(p), lex(c.base), plain("?")]);
       });
     }
   }
@@ -61,7 +63,7 @@ function buildTense(c, tense, polarity) {
       });
     } else {
       pronounsCanon.forEach((p, i) => {
-        push(p, [aux(beCap[i]), pron(p.toLowerCase()), lex(c.ing), plain("?")]);
+        push(p, [aux(beCap[i]), pronInt(p), lex(c.ing), plain("?")]);
       });
     }
   }
@@ -80,7 +82,7 @@ function buildTense(c, tense, polarity) {
       });
     } else {
       pronounsCanon.forEach((p, i) => {
-        push(p, [aux(haveCap[i]), pron(p.toLowerCase()), lex(c.pp), plain("?")]);
+        push(p, [aux(haveCap[i]), pronInt(p), lex(c.pp), plain("?")]);
       });
     }
   }
@@ -97,7 +99,7 @@ function buildTense(c, tense, polarity) {
       });
     } else {
       pronounsCanon.forEach((p) => {
-        push(p, [aux("Did"), pron(p.toLowerCase()), lex(c.base), plain("?")]);
+        push(p, [aux("Did"), pronInt(p), lex(c.base), plain("?")]);
       });
     }
   }
@@ -116,7 +118,7 @@ function buildTense(c, tense, polarity) {
       });
     } else {
       pronounsCanon.forEach((p, i) => {
-        push(p, [aux(beCap[i]), pron(p.toLowerCase()), lex(c.ing), plain("?")]);
+        push(p, [aux(beCap[i]), pronInt(p), lex(c.ing), plain("?")]);
       });
     }
   }
@@ -133,7 +135,43 @@ function buildTense(c, tense, polarity) {
       });
     } else {
       pronounsCanon.forEach((p) => {
-        push(p, [aux("Had"), pron(p.toLowerCase()), lex(c.pp), plain("?")]);
+        push(p, [aux("Had"), pronInt(p), lex(c.pp), plain("?")]);
+      });
+    }
+  }
+
+  // ----------- PRESENT PERFECT CONTINUOUS (aux: have + been) -----------
+  if (tense === "pres-perf-cont") {
+    const haveAff = ["have", "have", "has", "have", "have", "have"];
+    const haveCap = ["Have", "Have", "Has", "Have", "Have", "Have"];
+    if (polarity === "aff") {
+      pronounsCanon.forEach((p, i) => {
+        push(p, [pron(p), aux(haveAff[i]), aux("been"), lex(c.ing)]);
+      });
+    } else if (polarity === "neg") {
+      pronounsCanon.forEach((p, i) => {
+        push(p, [pron(p), aux(haveAff[i]), neg("not"), aux("been"), lex(c.ing)]);
+      });
+    } else {
+      pronounsCanon.forEach((p, i) => {
+        push(p, [aux(haveCap[i]), pronInt(p), aux("been"), lex(c.ing), plain("?")]);
+      });
+    }
+  }
+
+  // ----------- PAST PERFECT CONTINUOUS (aux: had + been) -----------
+  if (tense === "past-perf-cont") {
+    if (polarity === "aff") {
+      pronounsCanon.forEach((p) => {
+        push(p, [pron(p), aux("had"), aux("been"), lex(c.ing)]);
+      });
+    } else if (polarity === "neg") {
+      pronounsCanon.forEach((p) => {
+        push(p, [pron(p), aux("had"), neg("not"), aux("been"), lex(c.ing)]);
+      });
+    } else {
+      pronounsCanon.forEach((p) => {
+        push(p, [aux("Had"), pronInt(p), aux("been"), lex(c.ing), plain("?")]);
       });
     }
   }
@@ -173,6 +211,16 @@ const RULES = {
     neg:  "Subject + <em>had</em> + <em>not</em> + past participle.",
     int:  "<em>Had</em> + subject + past participle + ?",
   },
+  "pres-perf-cont": {
+    aff:  "Subject + <em>have / has</em> + <em>been</em> + verb + <em>-ing</em>.",
+    neg:  "Subject + <em>have / has</em> + <em>not</em> + <em>been</em> + verb + <em>-ing</em>.",
+    int:  "<em>Have / Has</em> + subject + <em>been</em> + verb + <em>-ing</em> + ?",
+  },
+  "past-perf-cont": {
+    aff:  "Subject + <em>had</em> + <em>been</em> + verb + <em>-ing</em>.",
+    neg:  "Subject + <em>had</em> + <em>not</em> + <em>been</em> + verb + <em>-ing</em>.",
+    int:  "<em>Had</em> + subject + <em>been</em> + verb + <em>-ing</em> + ?",
+  },
 };
 
 // When-to-use blurbs (kept short)
@@ -183,6 +231,8 @@ const USAGE = {
   "past-simple": "Completed actions at a definite past time.",
   "past-cont":   "Actions in progress at a moment in the past.",
   "past-perf":   "An action completed before another past action.",
+  "pres-perf-cont": "An action that started in the past and continues up to now, or has just stopped with a visible result.",
+  "past-perf-cont": "An action in progress up to a moment in the past, or until just before another past event.",
 };
 
 // Example sentences using "play" — re-rendered live with the chosen verb.
@@ -218,13 +268,23 @@ const EXAMPLES = {
     { si: 5, pol: "neg", tail: "that song before." },
     { si: 2, pol: "int", tail: "the part already" },
   ],
+  "pres-perf-cont": [
+    { si: 3, pol: "aff", tail: "in the garden for two hours." },
+    { si: 0, pol: "neg", tail: "much lately." },
+    { si: 1, pol: "int", tail: "since morning" },
+  ],
+  "past-perf-cont": [
+    { si: 5, pol: "aff", tail: "for an hour when it started to rain." },
+    { si: 0, pol: "neg", tail: "for long before he arrived." },
+    { si: 2, pol: "int", tail: "all morning" },
+  ],
 };
 
 function buildExample(c, tenseId, ex) {
   const rows = buildTense(c, tenseId, ex.pol);
   const row = rows[ex.si];
   const text = row.parts.map(p => p.text).join(" ").replace(" ?", "?");
-  if (ex.pol === "int") return text.replace(/\s\?$/, "") + " " + ex.tail + "?";
+  if (ex.pol === "int") return text.replace(/\?$/, "") + " " + ex.tail + "?";
   return text + " " + ex.tail;
 }
 

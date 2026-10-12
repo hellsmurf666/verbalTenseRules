@@ -2,10 +2,10 @@ import React, { useState, useEffect, useMemo } from "react";
 
 // Main app — verb conjugation reference, table layout matching the sketch.
 // Structure:
-//   Row 1: [Verb infinitive] [Simple] [Continuous] [Perfect]
-//   Row 2: [aux. verb]       [to do]  [to be]      [to have]
-//   Row 3: [Present]         [pres-simple] [pres-cont] [pres-perf]
-//   Row 4: [Past]            [past-simple] [past-cont] [past-perf]
+//   Row 1: [Verb infinitive] [Simple] [Continuous] [Perfect] [Perfect Continuous]
+//   Row 2: [aux. verb]       [to do]  [to be]      [to have] [to have been]
+//   Row 3: [Present]         [pres-simple] [pres-cont] [pres-perf] [pres-perf-cont]
+//   Row 4: [Past]            [past-simple] [past-cont] [past-perf] [past-perf-cont]
 // Each tense cell shows a compact summary, expands to reveal Aff/Neg/Int sub-tables.
 
 const POLARITIES = [
@@ -200,11 +200,11 @@ function App() {
 
   const [open, setOpen] = useState({});
   const toggle = (id) => setOpen(o => ({ ...o, [id]: !o[id] }));
-  const allOpen = ["pres-simple","pres-cont","pres-perf","past-simple","past-cont","past-perf"]
+  const allOpen = ["pres-simple","pres-cont","pres-perf","pres-perf-cont","past-simple","past-cont","past-perf","past-perf-cont"]
     .every(id => open[id]);
   const setAll = (v) => setOpen({
-    "pres-simple": v, "pres-cont": v, "pres-perf": v,
-    "past-simple": v, "past-cont": v, "past-perf": v,
+    "pres-simple": v, "pres-cont": v, "pres-perf": v, "pres-perf-cont": v,
+    "past-simple": v, "past-cont": v, "past-perf": v, "past-perf-cont": v,
   });
 
   const showExample = tweaks.showExamples !== false;
@@ -214,12 +214,14 @@ function App() {
     simple: true,
     cont: true,
     perf: true,
+    "perf-cont": true,
   });
 
   const COLS = [
     { key: "simple", title: "Simple", aux: "do", presentId: "pres-simple", pastId: "past-simple" },
     { key: "cont", title: "Continuous", aux: "be", presentId: "pres-cont", pastId: "past-cont" },
     { key: "perf", title: "Perfect", aux: "have", presentId: "pres-perf", pastId: "past-perf" },
+    { key: "perf-cont", title: "Perfect Continuous", aux: "have been", presentId: "pres-perf-cont", pastId: "past-perf-cont" },
   ];
   const shownCols = COLS.filter(c => visibleCols[c.key]);
   const displayedCols = shownCols.length > 0 ? shownCols : [COLS[0]];
@@ -238,9 +240,11 @@ function App() {
     "pres-simple": { id: "pres-simple", row: "Present", col: "Simple",     auxLabel: "do" },
     "pres-cont":   { id: "pres-cont",   row: "Present", col: "Continuous", auxLabel: "be" },
     "pres-perf":   { id: "pres-perf",   row: "Present", col: "Perfect",    auxLabel: "have" },
+    "pres-perf-cont": { id: "pres-perf-cont", row: "Present", col: "Perfect Continuous", auxLabel: "have been" },
     "past-simple": { id: "past-simple", row: "Past",    col: "Simple",     auxLabel: "did" },
     "past-cont":   { id: "past-cont",   row: "Past",    col: "Continuous", auxLabel: "was/were" },
     "past-perf":   { id: "past-perf",   row: "Past",    col: "Perfect",    auxLabel: "had" },
+    "past-perf-cont": { id: "past-perf-cont", row: "Past", col: "Perfect Continuous", auxLabel: "had been" },
   };
 
   return (
@@ -249,7 +253,7 @@ function App() {
         <div className="ph-eyebrow">English grammar</div>
         <h1 className="ph-title">Verb conjugation rules</h1>
         <p className="ph-sub">
-          Present and Past · Simple, Continuous and Perfect — affirmative, negative and interrogative forms.
+          Present and Past · Simple, Continuous, Perfect and Perfect Continuous — affirmative, negative and interrogative forms.
         </p>
       </header>
 
@@ -306,7 +310,7 @@ function App() {
         </div>
       </section>
 
-      {/* The grand table — matches the sketch: 4 cols × 4 rows */}
+      {/* The grand table — matches the sketch: 5 cols × 4 rows */}
       <section className="big-table" style={{ gridTemplateColumns: `240px repeat(${displayedCols.length}, 1fr)` }}>
         {/* Row 1: column headers */}
         <div className="bt-cell bt-head bt-corner">
