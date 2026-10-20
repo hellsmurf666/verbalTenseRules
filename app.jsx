@@ -176,7 +176,7 @@ function VerbCell({ rowLabel, conj, accent }) {
           </>
         )}
       </div>
-      {conj.isIrregular && <div className="vc-irreg">irregular verb</div>}
+      {conj.isIrregular && <div className="vc-irreg">irregular verb{conj.note ? <> · <span className="vc-note">{conj.note}</span></> : null}</div>}
     </div>
   );
 }
