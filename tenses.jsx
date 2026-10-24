@@ -29,7 +29,15 @@ function buildTense(c, tense, polarity) {
   const pronounsCanon = ["I", "You", "He / She / It", "We", "You (pl.)", "They"];
 
   // ----------- PRESENT SIMPLE (aux: do) -----------
-  if (tense === "pres-simple") {
+  if (tense === "pres-simple" && c.base === "be") {
+    // "be" is its own auxiliary: no do-support (I am not, Am I?)
+    const forms = ["am", "are", "is", "are", "are", "are"];
+    pronounsCanon.forEach((p, i) => {
+      if (polarity === "aff")      push(p, [pron(p), lex(forms[i])]);
+      else if (polarity === "neg") push(p, [pron(p), lex(forms[i]), neg("not")]);
+      else push(p, [lex(forms[i][0].toUpperCase() + forms[i].slice(1)), pronInt(p), plain("?")]);
+    });
+  } else if (tense === "pres-simple") {
     if (polarity === "aff") {
       // base form, 3rd sg → -s
       pronounsCanon.forEach((p, i) => {
@@ -88,7 +96,15 @@ function buildTense(c, tense, polarity) {
   }
 
   // ----------- PAST SIMPLE (aux: did) -----------
-  if (tense === "past-simple") {
+  if (tense === "past-simple" && c.base === "be") {
+    // "be" is its own auxiliary: no did-support (I was not, Was I?)
+    const forms = ["was", "were", "was", "were", "were", "were"];
+    pronounsCanon.forEach((p, i) => {
+      if (polarity === "aff")      push(p, [pron(p), lex(forms[i])]);
+      else if (polarity === "neg") push(p, [pron(p), lex(forms[i]), neg("not")]);
+      else push(p, [lex(forms[i][0].toUpperCase() + forms[i].slice(1)), pronInt(p), plain("?")]);
+    });
+  } else if (tense === "past-simple") {
     if (polarity === "aff") {
       pronounsCanon.forEach((p) => {
         push(p, [pron(p), lex(c.past)]);
@@ -280,7 +296,24 @@ const EXAMPLES = {
   ],
 };
 
+// "be" cannot take the "play" tails above (*"He is tennis"*), so it gets its own.
+// Same order as EXAMPLES[tense].
+const BE_TAILS = {
+  "pres-simple":    ["a student at this school.", "late for class.", "at home"],
+  "pres-cont":      ["careful right now.", "polite in class.", "silly"],
+  "pres-perf":      ["here many times.", "to London.", "there before"],
+  "past-simple":    ["at the park yesterday.", "ready last night.", "late for class"],
+  "past-cont":      ["noisy when the bell rang.", "rude when she called.", "quiet at 8pm"],
+  "past-perf":      ["at home before they arrived.", "at that concert before.", "there already"],
+  "pres-perf-cont": ["patient for two hours.", "helpful lately.", "difficult since morning"],
+  "past-perf-cont": ["very quiet for an hour when it started to rain.", "rude before he arrived.", "silly all morning"],
+};
+
 function buildExample(c, tenseId, ex) {
+  if (c.base === "be" && BE_TAILS[tenseId]) {
+    const i = EXAMPLES[tenseId].indexOf(ex);
+    if (i >= 0) ex = { ...ex, tail: BE_TAILS[tenseId][i] };
+  }
   const rows = buildTense(c, tenseId, ex.pol);
   const row = rows[ex.si];
   const text = row.parts.map(p => p.text).join(" ").replace(" ?", "?");
